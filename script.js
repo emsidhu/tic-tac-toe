@@ -8,33 +8,84 @@ const Gameboard = (() => {
     let turn = 0
     
 
-    const checkValid = () => {
-        //check if a move is valid 
-        //(whether there is already a marker in the chosen position)
-        //if valid return true, else return false
+    const checkValid = square => {
+        if (!gameboard[square]) {
+            return true
+        }
+        else {
+            return false
+        }
     }
 
-    const checkWinner = () => {
-        //check who won, or if it's a tie
-        //if no winner and not a tie return false, else return a string saying who won
-    }
+    const checkGameEnd = () => {
+        if (gameboard.every(square => square)) {
+            return "tie"
+        } 
+
+        if ((gameboard[0] === gameboard[1] && gameboard[0] === gameboard[2]) ||
+            (gameboard[0] === gameboard[3] && gameboard[0] === gameboard[6])) {
+                if (gameboard[0] === "X") {
+                    return "Player One"
+                } if (gameboard[0] === "O") {
+                    return "Player Two"
+                }
+            } 
+        
+        if ((gameboard[8] === gameboard[7] && gameboard[8] === gameboard[6]) ||
+            (gameboard[8] === gameboard[5] && gameboard[8] === gameboard[2])) {
+                if (gameboard[8] === "X") {
+                    return "Player One"
+                } if (gameboard[8] === "O") {
+                    return "Player Two"
+                }
+            }
+        
+        if ((gameboard[4] === gameboard[3] && gameboard[4] == gameboard[5]) ||
+            (gameboard[4] === gameboard[1] && gameboard[4] === gameboard[7]) ||
+            (gameboard[4] === gameboard[0] && gameboard[4] === gameboard[8]) ||
+            (gameboard[4] === gameboard[6] && gameboard[4] === gameboard[2])) {
+                if (gameboard[4] === "X") {
+                    return "Player One"
+                } if (gameboard[4] === "O") {
+                    return "Player Two"
+                }
+            }
+        }
 
     const alertWinner = winner => {
-        //announce who won the game
+        alert(winner)
     }
 
-    const playTurn = () => {
-        //use checkValid() to see if a move is allowed
-        //if it is place a marker on the chosen square else return function
-        //use checkWinner() to see if the game should end
-        //if the game should end use alertWinner()
+    const playTurn = e => {
+        let square = e.target.id
+        if (!checkValid(square)) {
+            console.log("hi")
+            return
+        }
+        if (turn % 2 === 0) {
+            playerOne.placeMarker(square)
+        } else {
+            playerTwo.placeMarker(square)
+        }
+        DisplayController.updateDisplay()
+
+        let winner = checkGameEnd()
+
+        if (winner) {
+            alertWinner(winner)
+        }
+
+        turn++
     }
     return { gameboard, playTurn }
 })();
 
 const DisplayController = (() => {
-    const updateDisplay = gameboard => {
-        //update display
+    const updateDisplay = () => {
+        for(let i = 0; i < 9; i++) {
+            let square = document.getElementById(i)
+            square.textContent = Gameboard.gameboard[i]
+        }
     }
 
     return { updateDisplay }
@@ -43,9 +94,16 @@ const DisplayController = (() => {
 const Player = marker => {
     this.marker = marker
 
-    this.placeMarker = () => {
-        //place the player's marker into the gameboard
+    this.placeMarker = square => {
+        Gameboard.gameboard[square] = marker
     }
 
     return { placeMarker }
 }
+
+for (let i = 0; i < 9; i++) {
+    document.getElementById(i).addEventListener("click", Gameboard.playTurn)
+}
+
+const playerOne = Player("X")
+const playerTwo = Player("O")
