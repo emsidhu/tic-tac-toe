@@ -17,20 +17,18 @@ const Gameboard = (() => {
         }
     }
 
-    const checkGameEnd = () => {
-        if (gameboard.every(square => square)) {
-            return "tie"
-        } 
-
+    const checkTopLeft = () => {
         if ((gameboard[0] === gameboard[1] && gameboard[0] === gameboard[2]) ||
-            (gameboard[0] === gameboard[3] && gameboard[0] === gameboard[6])) {
-                if (gameboard[0] === "X") {
-                    return "Player One"
-                } if (gameboard[0] === "O") {
-                    return "Player Two"
-                }
-            } 
-        
+        (gameboard[0] === gameboard[3] && gameboard[0] === gameboard[6])) {
+            if (gameboard[0] === "X") {
+                return "Player One"
+            } if (gameboard[0] === "O") {
+                return "Player Two"
+            }
+        }
+    }
+
+    const checkBottomRight = () => {
         if ((gameboard[8] === gameboard[7] && gameboard[8] === gameboard[6]) ||
             (gameboard[8] === gameboard[5] && gameboard[8] === gameboard[2])) {
                 if (gameboard[8] === "X") {
@@ -39,17 +37,30 @@ const Gameboard = (() => {
                     return "Player Two"
                 }
             }
-        
+    }
+
+    const checkCenter = () => {
         if ((gameboard[4] === gameboard[3] && gameboard[4] == gameboard[5]) ||
-            (gameboard[4] === gameboard[1] && gameboard[4] === gameboard[7]) ||
-            (gameboard[4] === gameboard[0] && gameboard[4] === gameboard[8]) ||
-            (gameboard[4] === gameboard[6] && gameboard[4] === gameboard[2])) {
-                if (gameboard[4] === "X") {
-                    return "Player One"
-                } if (gameboard[4] === "O") {
-                    return "Player Two"
-                }
+        (gameboard[4] === gameboard[1] && gameboard[4] === gameboard[7]) ||
+        (gameboard[4] === gameboard[0] && gameboard[4] === gameboard[8]) ||
+        (gameboard[4] === gameboard[6] && gameboard[4] === gameboard[2])) {
+            if (gameboard[4] === "X") {
+                return "Player One"
+            } if (gameboard[4] === "O") {
+                return "Player Two"
             }
+        }
+    }
+
+    const checkGameEnd = () => {
+        if (gameboard.every(square => square)) {
+            return "tie"
+        } 
+
+        return checkTopLeft() ? checkTopLeft() : 
+        checkBottomRight() ? checkBottomRight() : 
+        checkCenter() ? checkCenter() : false
+    
         }
 
     const alertWinner = winner => {
